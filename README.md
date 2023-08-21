@@ -72,6 +72,21 @@ Originally provided parametrizations were developed for the aug-cc-pwCVQZ orbita
 
 *Special parametrizations for smaller orbital basis sets are coming soon.*
 
+## Frequency integration
+
+The numerical frequency integration is performed with a Gauss-Legendre quadrature schemes. The weights $\tilde{\omega}_i$ and nodes $\tilde{x}_i$ of Gauss-Legendre quadrature for the interval [-1,1] are mapped into the interval [0,$\infty$] as follows
+\begin{equation}
+x_i = w_0\frac{1 + \tilde{x}_i}{1 - \tilde{x}_i}
+\end{equation}
+\begin{equation}
+\omega_i = \tilde{\omega}_i \frac{2\omega_0}{(1 - \tilde{x}_i)^2}
+\end{equation}
+
+Default number of frequency points is 50 and $\omega_0=2.5$. These values might be changed during the call of kernel function as follows:
+```python
+sigma.kernel(nw=100, x0=2.0)
+```
+
 ## References
 #### Main publications
 1. E. Trushin, A. Thierbach, A. Görling. Towards chemical accuracy at low computational cost: Density-functional theory with σ-functionals for the correlation energy – [J. Chem. Phys. 154 014104 (2021)](https://doi.org/10.1063/5.0026849)
