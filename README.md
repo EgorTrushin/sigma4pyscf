@@ -94,9 +94,8 @@ sigma.kernel(nw=100, x0=2.0)
 - Y. Lemke, D. Graf, J. Kussmann, C. Ochsenfeld. An assessment of orbital energy corrections for the direct random phase approximation and explicit σ-functionals - [Mol. Phys. 121:9-10 (2023)](https://doi.org/10.1080/00268976.2022.2098862)
 
 ## Current ToDo List
-- [ ] Example Jupyter Notebook with calculation of GW100 dataset
-- [ ] Tests
-- [ ] flake8, project.yaml, etc
-- [ ] Parametrizations for smaller basis sets
-- [ ] Scaled σ-functionals
-- [ ] Option to store σ-values in dat/pkl-file like in Molpro
+- [ ] Introduce tests
+- [ ] Introduce flake8, project.yaml, etc
+- [ ] Add parametrizations for smaller basis sets
+- [ ] Add scaled σ-functionals
+- [ ] Option to store σ-values in dat/pkl-file
