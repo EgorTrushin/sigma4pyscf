@@ -1,4 +1,4 @@
-# sigma-pyscf
+# sigma4pyscf
 
 **Python library for σ-functional calculations based on [PySCF](https://pyscf.org/).** 
 
