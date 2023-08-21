@@ -2,6 +2,10 @@
 
 **Python library for σ-functional calculations based on [PySCF](https://pyscf.org/).** 
 
+Alternative implementations are available in
+- Molpro Quantum Chemistry Software: see [corresponding section in the manual](https://www.molpro.net/manual/doku.php?id=kohn-sham_random-phase_approximation#rirpa_program).
+-  Amsterdam Density Functional (ADF): see [corresponding section in the manual](https://www.scm.com/doc/ADF/Input/Density_Functional.html?highlight=sigma#sigma-functional).
+
 ## Examples
 Spin-restricted σ-functional calculation for CO molecule:
 ```python
