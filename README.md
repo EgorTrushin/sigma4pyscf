@@ -74,7 +74,7 @@ Originally provided parametrizations were developed for the aug-cc-pwCVQZ orbita
 
 ## Frequency integration
 
-The numerical frequency integration is performed with a Gauss-Legendre quadrature schemes. The weights $\tilde{\omega}_i$ and nodes $\tilde{x}_i$ of Gauss-Legendre quadrature for the interval [-1,1] are mapped into the interval [0,$\infty$] as follows
+The numerical frequency integration is performed with a Gauss-Legendre quadrature schemes. The weights $\tilde{\omega}_i$ and nodes $\tilde{x}_i$ of Gauss-Legendre quadrature for the interval [-1,1] are mapped into the interval [0,∞] as follows
 $$x_i = w_0\frac{1 + \tilde{x}_i}{1 - \tilde{x}_i}$$
 $$\omega_i = \tilde{\omega}_i \frac{2\omega_0}{(1 - \tilde{x}_i)^2}$$
 
