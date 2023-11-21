@@ -92,6 +92,8 @@ sigma.kernel(nw=100, x0=2.0)
 #### Additional publications:
 - M. Glasbrenner, D. Graf, C. Ochsenfeld. Benchmarking the Accuracy of the Direct Random Phase Approximation and σ-Functionals for NMR Shieldings - [J. Chem. Theory Comput. 2022, 18, 1, 192–205](https://doi.org/10.1021/acs.jctc.1c00866)
 - Y. Lemke, D. Graf, J. Kussmann, C. Ochsenfeld. An assessment of orbital energy corrections for the direct random phase approximation and explicit σ-functionals - [Mol. Phys. 121:9-10 (2023)](https://doi.org/10.1080/00268976.2022.2098862)
+- Y. Lemke, C. Ochsenfeld. Highly accurate σ- and τ-functionals for beyond-RPA methods with approximate exchange kernels - [J. Chem. Phys. 159, 194104 (2023)](https://doi.org/10.1063/5.0173042)
+- D. Dhingra, A. Shori, A. Förster. Chemically accurate singlet-triplet gaps of organic chromophores and linear acenes by the random phase approximation and σ-functionals - [J. Chem. Phys. 159, 194105 (2023)](https://doi.org/10.1063/5.0177528)
 
 ## Current ToDo List
 - [ ] Introduce tests
