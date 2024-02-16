@@ -134,9 +134,9 @@ with open(os.path.dirname(os.path.realpath(__file__)) + "/json/params.json") as 
 def get_spline_coeffs(rpa):
     assert rpa._scf.xc in ["pbe", "pbe0", "b3lyp", "tpss"]
     if rpa.param is None and rpa._scf.xc in ["pbe", "pbe0"]:
-        param_name = "_".join((rpa._scf.xc, "s2"))
+        param_name = "_".join((rpa._scf.xc, "S2"))
     elif rpa.param is None and rpa._scf.xc in ["b3lyp", "tpss"]:
-        param_name = "_".join((rpa._scf.xc, "w1"))
+        param_name = "_".join((rpa._scf.xc, "W1"))
     else:
         param_name = "_".join((rpa._scf.xc, rpa.param))
     assert param_name in params.keys()
