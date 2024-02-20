@@ -20,14 +20,13 @@ mol.atom = [
 mol.basis = 'augccpwcvtz'
 mol.build()
 
-mf = dft.RKS(mol).density_fit()
-mf.xc = 'pbe'
-mf.kernel()
+mf = dft.RKS(mol, xc="pbe").density_fit().run()
 
 sigma = SIGMA(mf)
 sigma.kernel()
 print(f'RPA:   E_corr={sigma.e_corr_rpa:.10f}  E_tot={sigma.e_tot_rpa:.10f}')
 print(f'SIGMA: E_corr={sigma.e_corr:.10f}  E_tot={sigma.e_tot:.10f}')
+
 ```
 Spin-unrestricted σ-functional calculation for NH molecule:
 ```python
@@ -43,9 +42,7 @@ mol.basis = {'N': 'augccpwcvtz', 'H': 'augccpvtz'}
 mol.spin = 2
 mol.build()
 
-mf = dft.UKS(mol).density_fit()
-mf.xc = 'pbe'
-mf.kernel()
+mf = dft.UKS(mol, xc="pbe").density_fit().run()
 
 sigma = USIGMA(mf)
 sigma.kernel()
