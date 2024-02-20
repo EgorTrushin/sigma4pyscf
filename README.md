@@ -98,8 +98,7 @@ sigma = SIGMA(mf, frozen=2)
 - D. Dhingra, A. Shori, A. Förster. Chemically accurate singlet-triplet gaps of organic chromophores and linear acenes by the random phase approximation and σ-functionals - [J. Chem. Phys. 159, 194105 (2023)](https://doi.org/10.1063/5.0177528)
 
 ### Current ToDo List
-- [ ] Introduce tests
-- [ ] Introduce flake8, project.yaml, etc
+- [ ] Introduce pytest
 - [ ] Add parametrizations for smaller basis sets
 - [ ] Add scaled σ-functionals
 - [ ] Option to store σ-values in dat/pkl-file
