@@ -63,9 +63,7 @@ def get_ecorr(rpa, Lpq, freqs, wts):
     e_corr_rpa = 0.0
     e_corr_sigma = 0.0
     for w in range(nw):
-        Pi = get_rho_response(
-            freqs[w], mo_energy, Lpq[0, :, :nocca, nocca:], Lpq[1, :, :noccb, noccb:]
-        )
+        Pi = get_rho_response(freqs[w], mo_energy, Lpq[0, :, :nocca, nocca:], Lpq[1, :, :noccb, noccb:])
         sigmas, _ = linalg.eigh(-Pi)
         ec_w_rpa = 0.0
         ec_w_sigma = 0.0
