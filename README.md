@@ -86,7 +86,7 @@ sigma = SIGMA(mf, frozen=2)
 ```
 
 ### References
-#### Main publications
+#### Main publications:
 1. E. Trushin, A. Thierbach, A. Görling. Towards chemical accuracy at low computational cost: Density-functional theory with σ-functionals for the correlation energy – [J. Chem. Phys. 154 014104 (2021)](https://doi.org/10.1063/5.0026849)
 2. S. Fauser, E. Trushin, C. Neiss, A. Görling. Chemical accuracy with σ-functionals for the Kohn-Sham correlation energy optimized for different input orbitals and eigenvalues – [J. Chem. Phys. 155 134111 (2021)](https://doi.org/10.1063/5.0059641)
 3. J. Erhard, S. Fauser, E. Trushin, A. Görling. Scaled σ-functionals for the Kohn-Sham correlation energy with scaling functions from the homogeneous electron gas – [J. Chem. Phys. 157 114105 (2022)](https://doi.org/10.1063/5.0101641)
