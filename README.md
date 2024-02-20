@@ -4,9 +4,9 @@
 
 Alternative implementations are available in
 - Molpro Quantum Chemistry Software: see [corresponding section in the manual](https://www.molpro.net/manual/doku.php?id=kohn-sham_random-phase_approximation#rirpa_program).
--  Amsterdam Density Functional (ADF): see [corresponding section in the manual](https://www.scm.com/doc/ADF/Input/Density_Functional.html#sigma-functional).
+- Amsterdam Density Functional (ADF): see [corresponding section in the manual](https://www.scm.com/doc/ADF/Input/Density_Functional.html#sigma-functional).
 
-## Examples
+### Examples
 Spin-restricted σ-functional calculation for CO molecule:
 ```python
 from pyscf import gto, dft
@@ -52,7 +52,7 @@ print(f'SIGMA: E_corr={sigma.e_corr:.10f}  E_tot={sigma.e_tot:.10f}')
 See also examples in *example* directory:
 - [W4-11RE.ipynb](https://github.com/EgorTrushin/sigma4pyscf/blob/main/examples/W4-11RE/W4-11RE.ipynb): calculation using RPA and σ-functional for the W4-11RE dataset and comparisions of deviations
 
-## Choice of parametrizations and basis sets
+### Choice of parametrizations and basis sets
 Currently, the σ-functional can be used in conjunction with the PBE, TPSS,  PBE0 and B3LYP exchange-correlation functionals. The available parametrizations for each functional are listed in the following table:
 | functional | available parametrizations |
 |------------|--------------|
@@ -69,8 +69,7 @@ Originally provided parametrizations were developed for the aug-cc-pwCVQZ orbita
 
 *Special parametrizations for smaller orbital basis sets are coming soon.*
 
-## Frequency integration
-
+### Frequency integration
 The numerical frequency integration is performed with a Gauss-Legendre quadrature schemes. The weights $\tilde{\omega}_i$ and nodes $\tilde{x}_i$ of Gauss-Legendre quadrature for the interval [-1,1] are mapped into the interval [0,∞] as follows
 $$x_i = w_0\frac{1 + \tilde{x}_i}{1 - \tilde{x}_i}$$
 $$\omega_i = \tilde{\omega}_i \frac{2\omega_0}{(1 - \tilde{x}_i)^2}$$
@@ -80,7 +79,13 @@ Default number of frequency points is 50 and $\omega_0=2.5$. These values might 
 sigma.kernel(nw=100, x0=2.0)
 ```
 
-## References
+### Frozen-core orbitals
+The number of frozen core orbitals can be specified in the same way as in the PySCF RPA implementation. For example:
+```python
+sigma = SIGMA(mf, frozen=2)
+```
+
+### References
 #### Main publications
 1. E. Trushin, A. Thierbach, A. Görling. Towards chemical accuracy at low computational cost: Density-functional theory with σ-functionals for the correlation energy – [J. Chem. Phys. 154 014104 (2021)](https://doi.org/10.1063/5.0026849)
 2. S. Fauser, E. Trushin, C. Neiss, A. Görling. Chemical accuracy with σ-functionals for the Kohn-Sham correlation energy optimized for different input orbitals and eigenvalues – [J. Chem. Phys. 155 134111 (2021)](https://doi.org/10.1063/5.0059641)
@@ -92,7 +97,7 @@ sigma.kernel(nw=100, x0=2.0)
 - Y. Lemke, C. Ochsenfeld. Highly accurate σ- and τ-functionals for beyond-RPA methods with approximate exchange kernels - [J. Chem. Phys. 159, 194104 (2023)](https://doi.org/10.1063/5.0173042)
 - D. Dhingra, A. Shori, A. Förster. Chemically accurate singlet-triplet gaps of organic chromophores and linear acenes by the random phase approximation and σ-functionals - [J. Chem. Phys. 159, 194105 (2023)](https://doi.org/10.1063/5.0177528)
 
-## Current ToDo List
+### Current ToDo List
 - [ ] Introduce tests
 - [ ] Introduce flake8, project.yaml, etc
 - [ ] Add parametrizations for smaller basis sets
