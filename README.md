@@ -50,7 +50,8 @@ print(f'RPA:   E_corr={sigma.e_corr_rpa:.10f}  E_tot={sigma.e_tot_rpa:.10f}')
 print(f'SIGMA: E_corr={sigma.e_corr:.10f}  E_tot={sigma.e_tot:.10f}')
 ```
 See also examples in *example* directory:
-- [W4-11RE.ipynb](https://github.com/EgorTrushin/sigma4pyscf/blob/main/examples/W4-11RE/W4-11RE.ipynb): calculation using RPA and σ-functional for the W4-11RE dataset and comparisions of deviations
+- [W4-11RE.ipynb](/examples/W4-11RE/W4-11RE.ipynb): calculation using RPA and σ-functional for the W4-11RE dataset and comparisions of deviations
+- [write_and_read_sigmas.ipynb](/examples/write_and_read_sigmas.ipynb): saving of a pickle file with Hartree-Fock energy, frequency integration weights, sigma values; then reading of this file and evaluation of correlation and total energy.
 
 ### Choice of parametrizations and basis sets
 Currently, the σ-functional can be used in conjunction with the PBE, TPSS,  PBE0 and B3LYP exchange-correlation functionals. The available parametrizations for each functional are listed in the following table:
@@ -101,4 +102,3 @@ sigma = SIGMA(mf, frozen=2)
 - [ ] Introduce pytest
 - [ ] Add parametrizations for smaller basis sets
 - [ ] Add scaled σ-functionals
-- [ ] Option to store σ-values in dat/pkl-file
