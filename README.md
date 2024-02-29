@@ -57,10 +57,10 @@ See also examples in *example* directory:
 Currently, the σ-functional can be used in conjunction with the PBE, TPSS,  PBE0 and B3LYP exchange-correlation functionals. The available parametrizations for each functional are listed in the following table:
 | functional | available parametrizations |
 |------------|--------------|
-| PBE        | P1<sup>1</sup> W1<sup>2</sup> S1<sup>4</sup> S2<sup>4</sup> S1re<sup>5</sup> |
+| PBE        | P1<sup>1</sup> W1<sup>2</sup> S1<sup>4</sup> S2<sup>4</sup> A1<sup>5</sup> A2<sup>5</sup> S1re<sup>6</sup> |
 | TPSS       | W1<sup>2</sup> |
 | B3LYP      | W1<sup>2</sup> |
-| PBE0       | W1<sup>1</sup> S1<sup>4</sup> S2<sup>4</sup> S1re<sup>5</sup> |
+| PBE0       | W1<sup>1</sup> S1<sup>4</sup> S2<sup>4</sup> S1re<sup>6</sup> |
 
 S2 parametrization is default for PBE and PBE0, whereas W1 parametrization is default for TPSS and B3LYP. The parametrization can be chosen during an initialization of SIGMA/USIGMA objects, e.g.:
 ```python
@@ -90,10 +90,10 @@ sigma = SIGMA(mf, frozen=2)
 2. S. Fauser, E. Trushin, C. Neiss, A. Görling. Chemical accuracy with σ-functionals for the Kohn-Sham correlation energy optimized for different input orbitals and eigenvalues – [J. Chem. Phys. 155 134111 (2021)](https://doi.org/10.1063/5.0059641)
 3. J. Erhard, S. Fauser, E. Trushin, A. Görling. Scaled σ-functionals for the Kohn-Sham correlation energy with scaling functions from the homogeneous electron gas – [J. Chem. Phys. 157 114105 (2022)](https://doi.org/10.1063/5.0101641)
 4. C. Neiss, S. Fauser, A. Görling. Geometries and vibrational frequencies with Kohn–Sham methods using σ-functionals for the correlation energy - [J. Chem. Phys. 158, 044107 (2023)](https://doi.org/10.1063/5.0129524)
-5. S. Fauser, A. Förster, L. Redeker, C. Neiss, J. Erhard, E. Trushin, A. Görling. Basis set requirements of σ-functionals for Gaussian- and Slater-type basis functions and comparison with range-separated hybrid and double hybrid functionals - Accepted to J. Chem. Theory Comput.
+5. Y. Lemke, C. Ochsenfeld. Highly accurate σ- and τ-functionals for beyond-RPA methods with approximate exchange kernels - [J. Chem. Phys. 159, 194104 (2023)](https://doi.org/10.1063/5.0173042)
+6. S. Fauser, A. Förster, L. Redeker, C. Neiss, J. Erhard, E. Trushin, A. Görling. Basis set requirements of σ-functionals for Gaussian- and Slater-type basis functions and comparison with range-separated hybrid and double hybrid functionals - Accepted to J. Chem. Theory Comput.
 
 #### Additional publications:
 - M. Glasbrenner, D. Graf, C. Ochsenfeld. Benchmarking the Accuracy of the Direct Random Phase Approximation and σ-Functionals for NMR Shieldings - [J. Chem. Theory Comput. 2022, 18, 1, 192–205](https://doi.org/10.1021/acs.jctc.1c00866)
 - Y. Lemke, D. Graf, J. Kussmann, C. Ochsenfeld. An assessment of orbital energy corrections for the direct random phase approximation and explicit σ-functionals - [Mol. Phys. 121:9-10 (2023)](https://doi.org/10.1080/00268976.2022.2098862)
-- Y. Lemke, C. Ochsenfeld. Highly accurate σ- and τ-functionals for beyond-RPA methods with approximate exchange kernels - [J. Chem. Phys. 159, 194104 (2023)](https://doi.org/10.1063/5.0173042)
 - D. Dhingra, A. Shori, A. Förster. Chemically accurate singlet-triplet gaps of organic chromophores and linear acenes by the random phase approximation and σ-functionals - [J. Chem. Phys. 159, 194105 (2023)](https://doi.org/10.1063/5.0177528)
