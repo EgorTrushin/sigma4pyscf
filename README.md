@@ -8,7 +8,7 @@ $\sigma$-functionals model the exchange-correlation kernel missing within the Ra
 
 As an example, below are the error distributions for the reaction energies of the [W4-11RE dataset](https://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00757d) from PBE (PBE0), RPA@PBE (RPA@PBE0), and $\sigma$@PBE ($\sigma$@PBE0) calculations with the corresponding mean absolute errors.
 
-<img src="/examples/W4-11RE/PBE_W4_11RE.png" alt="drawing" width="370"/><img src="examples/W4-11RE/PBE0_W4_11RE.png" alt="drawing" width="370"/>
+<img src="/examples/W4-11RE/PBE_W4_11RE.png" alt="drawing" width="400"/><img src="examples/W4-11RE/PBE0_W4_11RE.png" alt="drawing" width="400"/>
 
 ---
 
