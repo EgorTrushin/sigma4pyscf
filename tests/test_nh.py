@@ -1,8 +1,11 @@
+import basis_set_exchange
 from pyscf import gto, dft
 from sigma.usigma import USIGMA
-from auxbasis_nh import AUXBASIS
 
-def calc_co():
+AUXBASIS = {"N": gto.load(basis_set_exchange.api.get_basis('aug-cc-pwCVQZ-RIFIT', elements='N', fmt='nwchem'), 'N'),
+            "H": gto.load(basis_set_exchange.api.get_basis('aug-cc-pVQZ-RIFIT', elements='H', fmt='nwchem'), 'H')}
+
+def calc_nh():
     mol = gto.Mole()
     mol.verbose = 0
     mol.atom = [
@@ -21,8 +24,8 @@ def calc_co():
 
 
 def test_answer():
-    e_corr_rpa, e_tot_rpa, e_corr, e_tot = calc_co()
-    assert (abs(e_corr_rpa + 0.3903602822) < 1e-6)
-    assert (abs(e_tot_rpa + 55.3670281990) < 1e-6)
-    assert (abs(e_corr + 0.2954264966) < 1e-6)
-    assert (abs(e_tot + 55.2720944134) < 1e-6)
+    e_corr_rpa, e_tot_rpa, e_corr, e_tot = calc_nh()
+    assert (abs(e_corr_rpa + 0.3903608275) < 1e-6)
+    assert (abs(e_tot_rpa + 55.3670285558) < 1e-6)
+    assert (abs(e_corr + 0.2840086425) < 1e-6)
+    assert (abs(e_tot + 55.2606763708) < 1e-6)

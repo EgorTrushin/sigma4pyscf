@@ -1,103 +1,49 @@
 #!/usr/bin/env python
-import pickle
 import numpy as np
-from numpy import linalg
-from pyscf import scf
-from pyscf.gw.urpa import URPA, get_rho_response, _mo_energy_without_core, _mo_without_core
-from .sigma import _get_scaled_legendre_roots, cspline_integr, get_spline_coeffs
+from pyscf import lib
+from pyscf.gw.urpa import URPA
+from .sigma import SIGMA
 
 
-def kernel(rpa, mo_energy, mo_coeff, Lpq=None, pkl=None, nw=50, x0=2.5):
+def make_dielectric_matrix(omega, e_ov, f_ov, eris, blksize=None):
     """
-    RPA correlation and total energy (or sigma-functional)
+    Compute dielectric matrix at a given frequency omega
 
     Args:
-        Lpq : density fitting 3-center integral in MO basis
-        pkl: name of pkl-file to store sigma-values and other relevant data
-        nw : number of frequency point on imaginary axis
-        x0: scaling factor for frequency grid
+        omega : float, frequency
+        e_ov : 1D array (nocc * nvir), orbital energy differences
+        eris : DF ERI object
 
     Returns:
-        e_tot : sigma_functional total energy
-        e_tot_rpa : RPA total energy
-        e_hf : EXX energy
-        e_corr : sigma-functional correlation energy
-        e_corr_rpa : RPA correlation energy
+        diel : 2D array (naux, naux), dielectric matrix
     """
-    mf = rpa._scf
-    # only support frozen core
-    if rpa.frozen is not None:
-        assert isinstance(rpa.frozen, int)
-        assert rpa.frozen < rpa.nocc[0] and rpa.frozen < rpa.nocc[1]
+    assert blksize is not None
 
-    if Lpq is None:
-        Lpq = rpa.ao2mo(mo_coeff)
+    nocc, nvir, naux = eris.nocc, eris.nvir, eris.naux
 
-    # Grids for integration on imaginary axis
-    freqs, wts = _get_scaled_legendre_roots(nw, x0)
+    isreal = eris.dtype == np.float64
 
-    # Compute energy (EXX)
-    dm = mf.make_rdm1()
-    uhf = scf.UHF(rpa.mol)
-    e_hf = uhf.energy_elec(dm=dm)[0]
-    e_hf += mf.energy_nuc()
+    diel = np.zeros((naux, naux), dtype=eris.dtype)
 
-    # Compute correlation energy
-    e_corr_rpa, e_corr, allsigmas = get_ecorr(rpa, Lpq, freqs, wts, pkl)
-
-    if pkl is not None:
-        with open(pkl, "wb") as fileObj:
-            pickle.dump(e_hf, fileObj)
-            pickle.dump(wts, fileObj)
-            pickle.dump(allsigmas, fileObj)
-
-    # Compute totol energy
-    e_tot = e_hf + e_corr
-    e_tot_rpa = e_hf + e_corr_rpa
-
-    return e_tot, e_tot_rpa, e_hf, e_corr, e_corr_rpa
-
-
-def get_ecorr(rpa, Lpq, freqs, wts, pkl):
-    """
-    Compute correlation energy
-    """
-    mo_energy = _mo_energy_without_core(rpa, rpa._scf.mo_energy)
-    nocca, noccb = rpa.nocc
-    nw = len(freqs)
-
-    x, c = get_spline_coeffs(rpa)
-
-    if pkl is not None:
-        allsigmas = []
-
-    e_corr_rpa = 0.0
-    e_corr_sigma = 0.0
-    for w in range(nw):
-        Pi = get_rho_response(freqs[w], mo_energy, Lpq[0, :, :nocca, nocca:], Lpq[1, :, :noccb, noccb:])
-        sigmas, _ = linalg.eigh(-Pi)
-        if pkl is not None:
-            allsigmas.append(sigmas)
-        ec_w_rpa = 0.0
-        ec_w_sigma = 0.0
-        for sigma in sigmas:
-            if sigma > 0.0:
-                ec_w_rpa += np.log(1.0 + sigma) - sigma
-                ec_w_sigma += -cspline_integr(c, x, sigma)
+    for s in [0, 1]:
+        chi0 = (2.0 * e_ov[s] * f_ov[s] / (omega ** 2 + e_ov[s] ** 2)).ravel()
+        for p0, p1 in lib.prange(0, nocc[s] * nvir[s], blksize):
+            ovL = eris.get_ov_blk(s, p0, p1)
+            ovL_chi = (ovL.T * chi0[p0:p1]).T
+            if isreal:
+                lib.ddot(ovL_chi.T, ovL, c=diel, beta=1)
             else:
-                assert abs(sigma) < 1.0e-14
-        e_corr_rpa += 1.0 / (2.0 * np.pi) * ec_w_rpa * wts[w]
-        e_corr_sigma += 1.0 / (2.0 * np.pi) * ec_w_sigma * wts[w]
+                lib.dot(ovL_chi.T, ovL.conj(), c=diel, beta=1)
+            ovL = ovL_chi = None
 
-    e_corr_sigma += e_corr_rpa
-
-    if pkl is not None:
-        return e_corr_rpa, e_corr_sigma, np.array(allsigmas)
-    else:
-        return e_corr_rpa, e_corr_sigma, None
+    return diel
 
 
 class USIGMA(URPA):
+    get_e_hf = SIGMA.get_e_hf
+    kernel = SIGMA.kernel
+    _finalize = SIGMA._finalize
+
     def __init__(self, mf, frozen=None, auxbasis=None, param=None):
         super().__init__(mf, frozen, auxbasis)
 
@@ -106,31 +52,60 @@ class USIGMA(URPA):
         self.e_corr_rpa = None
         self.e_tot_rpa = None
 
-    def kernel(self, mo_energy=None, mo_coeff=None, Lpq=None, pkl=None, nw=50, x0=2.5):
+    def make_e_ov(self):
+        """
+        Compute orbital energy differences
+        """
+        split_mo_energy = self.split_mo_energy()
+        e_ov = [(split_mo_energy[s][1][:, None] - split_mo_energy[s][2]).ravel() for s in [0, 1]]
+
+        if self.nocc[1] > 0:
+            gap = [-e_ov[s].max() for s in [0, 1]]
+        else:
+            gap = (-e_ov[0].max(),)
+
+        if np.min(gap) < 1e-3:
+            print("RPA code is not well-defined for degenerate systems!")
+            print("Lowest orbital energy difference: % 6.4e", np.min(gap))
+
+        return e_ov
+
+    def make_f_ov(self):
+        """
+        Compute orbital occupation number differences
+        """
+        split_mo_occ = self.split_mo_occ()
+        return [(split_mo_occ[s][1][:, None] - split_mo_occ[s][2]).ravel() for s in [0, 1]]
+
+    def make_dielectric_matrix(self, omega, e_ov=None, f_ov=None, eris=None, max_memory=None, blksize=None):
         """
         Args:
-            mo_energy : 2D array (2, nmo), mean-field mo energy
-            mo_coeff : 3D array (2, nmo, nmo), mean-field mo coefficient
-            Lpq : 4D array (2, naux, nmo, nmo), 3-index ERI
-            pkl: name of pkl-file to store sigma-values and other relevant data
-            nw: interger, grid number
-            x0: real, scaling factor for frequency grid
+            omega : float, frequency
+            e_ov : 1D array (nocc * nvir), orbital energy differences
+            mo_coeff :  (nao, nmo), mean-field mo coefficient
+            cderi_ov :  (naux, nocc, nvir), Cholesky decomposed ERI in OV subspace.
 
         Returns:
-            self.e_tot : sigma-functional total energy
-            self.e_tot_rpa : RPA total eenrgy
-            self.e_hf : EXX energy
-            self.e_corr : sigma-functional correlation energy
-            self.e_corr_rpa : RPA correlation energy
+            diel : 2D array (naux, naux), dielectric matrix
         """
-        if mo_coeff is None:
-            mo_coeff = _mo_without_core(self, self._scf.mo_coeff)
-        if mo_energy is None:
-            mo_energy = _mo_energy_without_core(self, self._scf.mo_energy)
+        if e_ov is None:
+            e_ov = self.make_e_ov()
+        if f_ov is None:
+            f_ov = self.make_f_ov()
+        if eris is None:
+            eris = self.ao2mo()
+        if max_memory is None:
+            max_memory = self.max_memory
 
-        self.dump_flags()
-        self.e_tot, self.e_tot_rpa, self.e_hf, self.e_corr, self.e_corr_rpa = kernel(
-            self, mo_energy, mo_coeff, Lpq=Lpq, pkl=pkl, nw=nw, x0=x0
-        )
+        if blksize is None:
+            mem_avail = max_memory - lib.current_memory()[0]
+            nocc, nvir, naux = eris.nocc, eris.nvir, eris.naux
+            dsize = eris.dsize
+            mem_blk = 2 * naux * dsize / 1e6  # ovL and ovL*chi0
+            blksize = max(1, min(max(nocc) * max(nvir), int(np.floor(mem_avail * 0.7 / mem_blk))))
+        else:
+            blksize = min(blksize, e_ov.size)
 
-        return self.e_corr
+        diel = make_dielectric_matrix(omega, e_ov, f_ov, eris, blksize=blksize)
+
+        return diel

@@ -1,6 +1,9 @@
+import basis_set_exchange
 from pyscf import gto, dft
 from sigma.sigma import SIGMA
-from auxbasis_co import AUXBASIS
+
+AUXBASIS = {"C": gto.load(basis_set_exchange.api.get_basis('aug-cc-pwCVQZ-RIFIT', elements='C', fmt='nwchem'), 'C'),
+            "O": gto.load(basis_set_exchange.api.get_basis('aug-cc-pwCVQZ-RIFIT', elements='O', fmt='nwchem'), 'O')}
 
 def calc_co():
     mol = gto.Mole()
@@ -21,7 +24,7 @@ def calc_co():
 
 def test_answer():
     e_corr_rpa, e_tot_rpa, e_corr, e_tot = calc_co()
-    assert (abs(e_corr_rpa + 0.802657497174) < 1e-6)
-    assert (abs(e_tot_rpa + 113.569912588668) < 1e-6)
-    assert (abs(e_corr + 0.626462967824) < 1e-6)
-    assert (abs(e_tot + 113.393718059318) < 1e-6)
+    assert (abs(e_corr_rpa + 0.8026575065) < 1e-6)
+    assert (abs(e_tot_rpa + 113.5699111213) < 1e-6)
+    assert (abs(e_corr + 0.6033189902) < 1e-6)
+    assert (abs(e_tot + 113.3705726050) < 1e-6)

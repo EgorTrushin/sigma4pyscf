@@ -7,81 +7,46 @@ from numpy import linalg
 from pyscf import scf
 from pyscf.gw.rpa import (
     RPA,
-    get_rho_response,
     _get_scaled_legendre_roots,
-    _mo_energy_without_core,
-    _mo_without_core,
 )
 
 
-def kernel(rpa, mo_energy, mo_coeff, Lpq=None, pkl=None, nw=50, x0=2.5):
+def kernel(rpa, eris=None, nw=50, x0=2.5, pkl=None):
     """
     RPA and sigma-functional correlation and total energy
 
     Args:
-        Lpq : density fitting 3-center integral in MO basis
-        pkl: name of pkl-file to store sigma-values and other relevant data
+        eris : Cholesky decomposed ERI in OV subspace
         nw : number of frequency point on imaginary axis
         x0: scaling factor for frequency grid
+        pkl: name of pkl-file to store sigma-values and other relevant data
 
     Returns:
-        e_tot : sigma-functional total energy
-        e_tot_rpa : RPA total energy
         e_hf : EXX energy
         e_corr : sigma-functional correlation energy
         e_corr_rpa : RPA correlation energy
     """
-    mf = rpa._scf
-    # only support frozen core
-    if rpa.frozen is not None:
-        assert isinstance(rpa.frozen, int)
-        assert rpa.frozen < rpa.nocc
 
-    if Lpq is None:
-        Lpq = rpa.ao2mo(mo_coeff)
+    if eris is None:
+        eris = rpa.ao2mo()
+
+    # Compute exact exchange energy (EXX)
+    e_hf = rpa.get_e_hf()
 
     # Grids for integration on imaginary axis
     freqs, wts = _get_scaled_legendre_roots(nw, x0)
 
-    # Compute HF energy (EXX)
-    dm = mf.make_rdm1()
-    rhf = scf.RHF(rpa.mol)
-    e_hf = rhf.energy_elec(dm=dm)[0]
-    e_hf += mf.energy_nuc()
-
     # Compute correlation energy
-    e_corr_rpa, e_corr, allsigmas = get_ecorr(rpa, Lpq, freqs, wts, pkl)
-
-    if pkl is not None:
-        with open(pkl, "wb") as fileObj:
-            pickle.dump(e_hf, fileObj)
-            pickle.dump(wts, fileObj)
-            pickle.dump(allsigmas, fileObj)
-
-    # Compute totol energy
-    e_tot = e_hf + e_corr
-    e_tot_rpa = e_hf + e_corr_rpa
-
-    return e_tot, e_tot_rpa, e_hf, e_corr, e_corr_rpa
-
-
-def get_ecorr(rpa, Lpq, freqs, wts, pkl):
-    """
-    Compute correlation energy
-    """
-    mo_energy = _mo_energy_without_core(rpa, rpa._scf.mo_energy)
-    nocc = rpa.nocc
     nw = len(freqs)
-
     x, c = get_spline_coeffs(rpa)
-
     if pkl is not None:
         allsigmas = []
-
     e_corr_rpa = 0.0
     e_corr_sigma = 0.0
+    e_ov = rpa.make_e_ov()
+    f_ov = rpa.make_f_ov()
     for w in range(nw):
-        Pi = get_rho_response(freqs[w], mo_energy, Lpq[:, :nocc, nocc:])
+        Pi = rpa.make_dielectric_matrix(freqs[w], e_ov, f_ov, eris, blksize=None)
         sigmas, _ = linalg.eigh(-Pi)
         if pkl is not None:
             allsigmas.append(sigmas)
@@ -99,9 +64,12 @@ def get_ecorr(rpa, Lpq, freqs, wts, pkl):
     e_corr_sigma += e_corr_rpa
 
     if pkl is not None:
-        return e_corr_rpa, e_corr_sigma, np.array(allsigmas)
-    else:
-        return e_corr_rpa, e_corr_sigma, None
+        with open(pkl, "wb") as fileObj:
+            pickle.dump(e_hf, fileObj)
+            pickle.dump(wts, fileObj)
+            pickle.dump(allsigmas, fileObj)
+
+    return e_hf, e_corr_sigma, e_corr_rpa
 
 
 class SIGMA(RPA):
@@ -113,32 +81,21 @@ class SIGMA(RPA):
         self.e_corr_rpa = None
         self.e_tot_rpa = None
 
-    def kernel(self, mo_energy=None, mo_coeff=None, Lpq=None, pkl=None, nw=50, x0=2.5):
+    def kernel(self, eris=None, nw=50, x0=2.5, pkl=None):
         """
         Args:
-            mo_energy : 1D array (nmo), mean-field mo energy
-            mo_coeff : 2D array (nmo, nmo), mean-field mo coefficient
-            Lpq : 3D array (naux, nmo, nmo), 3-index ERI
+            eris : Cholesky decomposed ERI in OV subspace
+            nw : number of frequency point on imaginary axis
+            x0: scaling factor for frequency grid
             pkl: name of pkl-file to store sigma-values and other relevant data
-            nw: interger, grid number
-            x0: real, scaling factor for frequency grid
-
-        Returns:
-            self.e_tot : sigma-functional total energy
-            self.e_tot_rpa : RPA total eenrgy
-            self.e_hf : EXX energy
-            self.e_corr : sigma-functional correlation energy
-            self.e_corr_rpa : RPA correlation energy
         """
-        if mo_coeff is None:
-            mo_coeff = _mo_without_core(self, self._scf.mo_coeff)
-        if mo_energy is None:
-            mo_energy = _mo_energy_without_core(self, self._scf.mo_energy)
 
-        self.dump_flags()
-        self.e_tot, self.e_tot_rpa, self.e_hf, self.e_corr, self.e_corr_rpa = kernel(
-            self, mo_energy, mo_coeff, Lpq=Lpq, pkl=pkl, nw=nw, x0=x0
-        )
+        res = kernel(self, eris=eris, nw=nw, x0=x0, pkl=pkl)
+
+        self.e_hf, self.e_corr, self.e_corr_rpa = res
+
+        self._finalize()
+        self.e_tot_rpa = self.e_hf + self.e_corr_rpa
 
         return self.e_corr
 
@@ -151,7 +108,7 @@ with open(os.path.dirname(os.path.realpath(__file__)) + "/json/params.json") as 
 def get_spline_coeffs(rpa):
     assert rpa._scf.xc in ["pbe", "pbe0", "b3lyp", "tpss"]
     if rpa.param is None and rpa._scf.xc in ["pbe", "pbe0"]:
-        param_name = "_".join((rpa._scf.xc, "S2"))
+        param_name = "_".join((rpa._scf.xc, "S1"))
     elif rpa.param is None and rpa._scf.xc in ["b3lyp", "tpss"]:
         param_name = "_".join((rpa._scf.xc, "W1"))
     else:
@@ -185,20 +142,20 @@ def cspline_integr(c, x, s):
         h = s - x[m - 1]
         integral = (
             0.5 * c[1][0] * x[1] ** 2 / s
-            + (c[0][m - 1] * h + c[1][m - 1] / 2.0 * h**2 + c[2][m - 1] / 3.0 * h**3 + c[3][m - 1] / 4.0 * h**4)
+            + (c[0][m - 1] * h + c[1][m - 1] / 2.0 * h ** 2 + c[2][m - 1] / 3.0 * h ** 3 + c[3][m - 1] / 4.0 * h ** 4)
             / s
         )
         for i in range(2, m):
             h = x[i] - x[i - 1]
             integral += (
-                c[0][i - 1] * h + c[1][i - 1] / 2.0 * h**2 + c[2][i - 1] / 3.0 * h**3 + c[3][i - 1] / 4.0 * h**4
+                c[0][i - 1] * h + c[1][i - 1] / 2.0 * h ** 2 + c[2][i - 1] / 3.0 * h ** 3 + c[3][i - 1] / 4.0 * h ** 4
             ) / s
     if m == len(x):
         integral = 0.5 * c[1][0] * x[1] ** 2 / s
         for i in range(2, m):
             h = x[i] - x[i - 1]
             integral += (
-                c[0][i - 1] * h + c[1][i - 1] / 2.0 * h**2 + c[2][i - 1] / 3.0 * h**3 + c[3][i - 1] / 4.0 * h**4
+                c[0][i - 1] * h + c[1][i - 1] / 2.0 * h ** 2 + c[2][i - 1] / 3.0 * h ** 3 + c[3][i - 1] / 4.0 * h ** 4
             ) / s
         integral += c[0][-1] * (1.0 - x[-1] / s)
 
