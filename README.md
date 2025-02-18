@@ -2,9 +2,21 @@
 
 **Python library for σ-functional calculations based on [PySCF](https://pyscf.org/).** 
 
+---
+
+$\sigma$-functionals model the exchange-correlation kernel missing within the Randon Phase Approximation (RPA) by a function of the Hartree kernel and the Kohn-Sham response function that is optimized using thermochemical reference data, and provide significant improvements over the RPA at almost no cost.
+
+As an example, below are the error distributions for the reaction energies of the [W4-11RE dataset](https://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00757d) from PBE (PBE0), RPA@PBE (RPA@PBE0), and $\sigma$@PBE ($\sigma$@PBE0) calculations with the corresponding mean absolute errors.
+
+<img src="/examples/W4-11RE/PBE_W4_11RE.png" alt="drawing" width="500"/><img src="examples/W4-11RE/PBE0_W4_11RE.png" alt="drawing" width="500"/>
+
+---
+
 Alternative implementations are available in
 - Molpro Quantum Chemistry Software: see [corresponding section in the manual](https://www.molpro.net/manual/doku.php?id=kohn-sham_random-phase_approximation#rirpa_program).
 - Amsterdam Density Functional (ADF): see [corresponding section in the manual](https://www.scm.com/doc/ADF/Input/Density_Functional.html#sigma-functional).
+
+---
 
 ### Examples
 Spin-restricted σ-functional calculation for CO molecule:
