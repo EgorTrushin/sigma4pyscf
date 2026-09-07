@@ -1,22 +1,16 @@
-import basis_set_exchange
 from pyscf import gto, dft
 from sigma.usigma import USIGMA
-
-AUXBASIS = {
-    "N": gto.load(basis_set_exchange.api.get_basis("aug-cc-pwCVQZ-RIFIT", elements="N", fmt="nwchem"), "N"),
-    "H": gto.load(basis_set_exchange.api.get_basis("aug-cc-pVQZ-RIFIT", elements="H", fmt="nwchem"), "H"),
-}
 
 
 def calc_nh():
     mol = gto.Mole()
     mol.verbose = 0
     mol.atom = [[7, (0.0, 0.0, 0.129649)], [1, (0.0, 0.0, -0.907543)]]
-    mol.basis = {"N": "augccpwcvqz", "H": "augccpvqz"}
+    mol.basis = {"N": "aug-cc-pwCVQZ", "H": "aug-cc-pVQZ"}
     mol.spin = 2
     mol.build()
 
-    mf = dft.UKS(mol, xc="pbe").density_fit(auxbasis=AUXBASIS).run()
+    mf = dft.UKS(mol, xc="pbe").density_fit(auxbasis={"N": "aug-cc-pwCVQZ-RIFIT", "H": "aug-cc-pVQZ-RIFIT"}).run()
 
     sigma = USIGMA(mf)
     sigma.kernel()

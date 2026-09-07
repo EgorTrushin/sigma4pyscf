@@ -1,21 +1,15 @@
-import basis_set_exchange
 from pyscf import gto, dft
 from sigma.sigma import SIGMA
-
-AUXBASIS = {
-    "C": gto.load(basis_set_exchange.api.get_basis("aug-cc-pwCVQZ-RIFIT", elements="C", fmt="nwchem"), "C"),
-    "O": gto.load(basis_set_exchange.api.get_basis("aug-cc-pwCVQZ-RIFIT", elements="O", fmt="nwchem"), "O"),
-}
 
 
 def calc_co():
     mol = gto.Mole()
     mol.verbose = 0
     mol.atom = [[6, (0.0, 0.0, -0.646514)], [8, (0.0, 0.0, 0.484886)]]
-    mol.basis = "augccpwcvqz"
+    mol.basis = "aug-cc-pwCVQZ"
     mol.build()
 
-    mf = dft.RKS(mol, xc="pbe").density_fit(auxbasis=AUXBASIS).run()
+    mf = dft.RKS(mol, xc="pbe").density_fit(auxbasis="aug-cc-pwCVQZ-RIFIT").run()
 
     sigma = SIGMA(mf)
     sigma.kernel()
