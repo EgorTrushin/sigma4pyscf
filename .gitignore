@@ -1,5 +1,6 @@
-sigma/__pycache__
-tests/__pycache__
+__pycache__/
 .ipynb_checkpoints
 .pytest_cache
+.ruff_cache/
+.venv/
 tmp*

@@ -18,6 +18,37 @@ Alternative implementations are available in
 
 ---
 
+### Installation
+
+Requires [uv](https://docs.astral.sh/uv/) and Python 3.12.
+
+```bash
+git clone https://github.com/EgorTrushin/sigma4pyscf.git
+cd sigma4pyscf
+uv sync
+```
+
+Run scripts and tests from the repository root:
+
+```bash
+uv run python your_script.py
+uv run pytest
+uv run ruff check .     # lint
+uv run ruff format .    # format
+```
+
+JupyterLab is included. The example notebooks load their datasets by relative path, so they
+need their own directory as the working directory *and* the repository root on `PYTHONPATH`.
+From the repository root:
+
+```bash
+PYTHONPATH=$PWD uv run --directory examples/W4-11RE jupyter lab
+```
+
+Use `--directory examples` for `write_and_read_sigmas.ipynb` and `--directory reproduce_molpro`
+for `reproduce_molpro.ipynb`. To run notebooks from an editor instead, select `.venv` as the
+kernel and apply the same two conditions.
+
 ### Examples
 Spin-restricted σ-functional calculation for CO molecule:
 ```python

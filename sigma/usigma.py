@@ -26,7 +26,7 @@ def make_dielectric_matrix(omega, e_ov, f_ov, eris, blksize=None):
     diel = np.zeros((naux, naux), dtype=eris.dtype)
 
     for s in [0, 1]:
-        chi0 = (2.0 * e_ov[s] * f_ov[s] / (omega ** 2 + e_ov[s] ** 2)).ravel()
+        chi0 = (2.0 * e_ov[s] * f_ov[s] / (omega**2 + e_ov[s] ** 2)).ravel()
         for p0, p1 in lib.prange(0, nocc[s] * nvir[s], blksize):
             ovL = eris.get_ov_blk(s, p0, p1)
             ovL_chi = (ovL.T * chi0[p0:p1]).T

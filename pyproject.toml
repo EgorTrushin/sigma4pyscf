@@ -1,2 +1,34 @@
-[tool.black]
+[project]
+name = "sigma4pyscf"
+version = "0.1.0"
+description = "Python library for sigma-functional calculations based on PySCF"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyscf>=2.8",
+    "numpy",
+    "basis-set-exchange",
+    "psutil",
+    "matplotlib",
+    "tqdm",
+    "jupyterlab",
+    "pytest",
+    "ruff",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
 line-length = 120
+# excludes must hold even when a path is passed explicitly
+# (editor format-on-save, pre-commit hooks)
+force-exclude = true
+extend-exclude = ["examples/W4-11RE/sets", "*.ipynb", "*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
