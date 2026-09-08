@@ -8,7 +8,7 @@ $\sigma$-functionals model the exchange-correlation kernel missing within the Ra
 
 As an example, below are the error distributions for the reaction energies of the [W4-11RE dataset](https://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00757d) from PBE (PBE0), RPA@PBE (RPA@PBE0), and $\sigma$@PBE ($\sigma$@PBE0) calculations with the corresponding mean absolute errors.
 
-<img src="/examples/W4-11RE/PBE_W4_11RE.png" alt="drawing" width="400"/><img src="examples/W4-11RE/PBE0_W4_11RE.png" alt="drawing" width="400"/>
+<img src="/examples/PBE_W4_11RE.png" alt="drawing" width="400"/><img src="examples/PBE0_W4_11RE.png" alt="drawing" width="400"/>
 
 ---
 
@@ -81,7 +81,7 @@ print(f'RPA:   E_corr={sigma.e_corr_rpa:.10f}  E_tot={sigma.e_tot_rpa:.10f}')
 print(f'SIGMA: E_corr={sigma.e_corr:.10f}  E_tot={sigma.e_tot:.10f}')
 ```
 See also examples in *example* directory:
-- [W4-11RE.ipynb](/examples/W4-11RE/W4-11RE.ipynb): calculation using RPA and σ-functional for the W4-11RE dataset and comparisions of deviations
+- [W4-11RE.ipynb](/examples/W4-11RE.ipynb): calculation using RPA and σ-functional for the W4-11RE dataset and comparisions of deviations
 - [write_and_read_sigmas.ipynb](/examples/write_and_read_sigmas.ipynb): saving of a pickle file with Hartree-Fock energy, frequency integration weights, sigma values; then reading of this file and evaluation of correlation and total energy.
 
 ### Choice of parametrizations and basis sets
