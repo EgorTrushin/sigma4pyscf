@@ -20,21 +20,51 @@ Alternative implementations are available in
 
 ### Installation
 
-Requires [uv](https://docs.astral.sh/uv/) and Python 3.12.
+Clone the repository, then set up the environment in one of two ways.
 
 ```bash
 git clone https://github.com/EgorTrushin/sigma4pyscf.git
 cd sigma4pyscf
+```
+
+#### With uv
+
+[uv](https://docs.astral.sh/uv/) sets up everything and installs the exact versions recorded in `uv.lock`:
+
+```bash
 uv sync
 ```
 
-Run scripts and tests from the repository root:
+This creates the virtual environment `.venv/` using the Python version from `.python-version` (3.12). Prefix commands with `uv run` to use the environment, e.g. `uv run pytest` or `uv run jupyter lab`, or activate it once with `source .venv/bin/activate`.
+
+#### With python3 and pip
+
+Without uv, create the virtual environment with `python3` (3.12 or newer) and install the pinned packages from `requirements.txt`:
 
 ```bash
-uv run python your_script.py
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+`requirements.txt` is exported from `uv.lock` with `uv export --frozen --format requirements-txt -o requirements.txt`, so both routes give the same package versions.
+
+#### Running
+
+sigma4pyscf is not installed as a package, so scripts must be started from the repository root for the `sigma/` package to be importable:
+
+```bash
+uv run python your_script.py   # with uv
+python your_script.py          # with .venv activated
+```
+
+`pytest` finds the package itself via `pythonpath = ["."]` in `pyproject.toml`, and the example notebooks in `examples/` put the repository root on `sys.path` themselves, so they run wherever JupyterLab is started from:
+
+```bash
 uv run pytest
 uv run ruff check .     # lint
 uv run ruff format .    # format
+uv run jupyter lab
 ```
 
 ### Examples
