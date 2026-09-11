@@ -15,6 +15,7 @@ As an example, below are the error distributions for the reaction energies of th
 Alternative implementations are available in
 - Molpro Quantum Chemistry Software: see [corresponding section in the manual](https://www.molpro.net/manual/doku.php?id=kohn-sham_random-phase_approximation#rirpa_program).
 - Amsterdam Density Functional (ADF): see [corresponding section in the manual](https://www.scm.com/doc/ADF/Input/Density_Functional.html#sigma-functional).
+- Turbomole: see the *Random Phase Approximation and Beyond* section in the [TURBOMOLE Manual](https://www.turbomole.org/turbomole/turbomole-documentation/)
 
 ---
 
