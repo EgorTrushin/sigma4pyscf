@@ -24,7 +24,7 @@ line-length = 120
 # excludes must hold even when a path is passed explicitly
 # (editor format-on-save, pre-commit hooks)
 force-exclude = true
-extend-exclude = ["examples/W4-11RE/sets", "*.ipynb", "*.md"]
+extend-exclude = ["examples/sets", "*.ipynb", "*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W"]
