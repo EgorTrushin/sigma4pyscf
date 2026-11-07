@@ -4,7 +4,7 @@
 
 ---
 
-$\sigma$-functionals model the exchange-correlation kernel missing within the Randon Phase Approximation (RPA) by a function of the Hartree kernel and the Kohn-Sham response function that is optimized using thermochemical reference data, and provide significant improvements over the RPA at almost no cost.
+$\sigma$-functionals model the exchange-correlation kernel missing within the Random Phase Approximation (RPA) by a function of the Hartree kernel and the Kohn-Sham response function that is optimized using thermochemical reference data, and provide significant improvements over the RPA at almost no cost.
 
 As an example, below are the error distributions for the reaction energies of the [W4-11RE dataset](https://pubs.rsc.org/en/content/articlelanding/2017/cp/c7cp00757d) from PBE (PBE0), RPA@PBE (RPA@PBE0), and $\sigma$@PBE ($\sigma$@PBE0) calculations with the corresponding mean absolute errors.
 
